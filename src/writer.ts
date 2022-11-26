@@ -27,6 +27,21 @@ export default class Writer extends Readable {
     private _buffer = Buffer.alloc(0);
 
     /**
+     * Creates a new instance of the writer with the buffer preloaded with data if specified
+     *
+     * @param payload
+     * @param encoding
+     */
+    constructor (
+        payload: Reader | Writer | Buffer | Uint8Array | string = Buffer.alloc(0),
+        encoding: BufferEncoding = 'hex'
+    ) {
+        super();
+
+        this.append(payload, encoding);
+    }
+
+    /**
      * Returns the current contents of the buffer
      */
     public get buffer (): Buffer {
@@ -141,9 +156,9 @@ export default class Writer extends Readable {
      */
     public hash (hash: Buffer | Uint8Array | string, encoding: BufferEncoding = 'hex'): Writer {
         if ((hash instanceof Buffer || hash instanceof Uint8Array) && (hash.length === 32 || hash.length === 64)) {
-            return this.write(hash);
+            return this.append(hash);
         } else if (typeof hash === 'string' && (hash.length === 64 || hash.length === 128)) {
-            return this.write(hash, encoding);
+            return this.append(hash, encoding);
         }
 
         throw new TypeError('hash is of wrong size and/or type');
@@ -156,9 +171,9 @@ export default class Writer extends Readable {
      */
     public hex (hex: Buffer | Uint8Array | string): Writer {
         if (hex instanceof Buffer || hex instanceof Uint8Array) {
-            return this.write(hex);
+            return this.append(hex);
         } else if (hex.length % 2 === 0) {
-            return this.write(hex, 'hex');
+            return this.append(hex, 'hex');
         }
 
         throw new TypeError('hex is of the wrong size and/or type');
@@ -205,7 +220,7 @@ export default class Writer extends Readable {
                 throw new TypeError('value bit size is not supported');
         }
 
-        return this.write(buffer);
+        return this.append(buffer);
     }
 
     /**
@@ -259,7 +274,7 @@ export default class Writer extends Readable {
 
         const buffer = Buffer.from(value, encoding);
 
-        return this.write(buffer);
+        return this.append(buffer);
     }
 
     /**
@@ -311,7 +326,7 @@ export default class Writer extends Readable {
 
         const buffer = bigEndian ? Writer.writeUIntBE(value, bytes) : Writer.writeUIntLE(value, bytes);
 
-        return this.write(buffer);
+        return this.append(buffer);
     }
 
     /**
@@ -396,7 +411,7 @@ export default class Writer extends Readable {
         }
 
         if (!levin) {
-            return this.write(Buffer.from(Varint.encode(value)));
+            return this.append(Buffer.from(Varint.encode(value)));
         } else {
             if (value.greater(BytePackBigInt('1073741823'))) {
                 throw new RangeError('value out of range');
@@ -433,27 +448,25 @@ export default class Writer extends Readable {
      * @param payload
      * @param encoding
      */
-    public write (
-        payload: Buffer | Writer | Reader | Uint8Array | string,
+    public append (
+        payload: Reader | Writer | Buffer | Uint8Array | string,
         encoding: BufferEncoding = 'hex'
     ): Writer {
-        const write = (buffer: Buffer): Writer => {
-            this._buffer = Buffer.concat([this._buffer, buffer]);
+        let buffer: Buffer;
 
-            return this;
-        };
-
-        if (payload instanceof Writer) {
-            return write(payload.buffer);
-        } else if (payload instanceof Reader) {
-            return write(payload.buffer);
+        if (payload instanceof Reader || payload instanceof Writer) {
+            buffer = payload.buffer;
         } else if (payload instanceof Buffer) {
-            return write(payload);
-        } else if (typeof payload === 'string') {
-            return write(Buffer.from(payload, encoding));
-        } else { // if it's not a string, it needs to be
-            return write(Buffer.from(JSON.stringify(payload)));
+            buffer = payload;
+        } else if (payload instanceof Uint8Array) {
+            buffer = Buffer.from(payload);
+        } else {
+            buffer = Buffer.from(payload, encoding);
         }
+
+        this._buffer = Buffer.concat([this._buffer, buffer]);
+
+        return this;
     }
 
     /**
@@ -462,6 +475,6 @@ export default class Writer extends Readable {
      * @param value
      */
     public bytes (value: Buffer | Uint8Array): Writer {
-        return this.write(value);
+        return this.append(value);
     }
 }

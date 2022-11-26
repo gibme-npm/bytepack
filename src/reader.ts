@@ -153,9 +153,7 @@ export default class Reader extends Writable {
     ) {
         let buffer: Buffer;
 
-        if (blob instanceof Reader) {
-            buffer = blob.buffer;
-        } else if (blob instanceof Writer) {
+        if (blob instanceof Reader || blob instanceof Writer) {
             buffer = blob.buffer;
         } else if (blob instanceof Buffer) {
             buffer = blob;
