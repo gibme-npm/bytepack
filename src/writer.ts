@@ -1,6 +1,22 @@
-// Copyright (c) 2018-2022 Brandon Lehmann
+// Copyright (c) 2018-2022, Brandon Lehmann <brandonlehmann@gmail.com>
 //
-// Please see the included LICENSE file for more information.
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
 
 import Varint, { BigInteger, BytePackBigInt } from './varint';
 import { Readable } from 'stream';
@@ -10,16 +26,23 @@ import { BitSize } from './types';
 export default class Writer extends Readable {
     private _buffer = Buffer.alloc(0);
 
+    /**
+     * Returns the current contents of the buffer
+     */
     public get buffer (): Buffer {
         return this._buffer;
     }
 
+    /**
+     * Returns the byte size of the current buffer
+     */
     public get length (): number {
         return this._buffer.length;
     }
 
     private _readIndex = 0;
 
+    /** @ignore */
     private get readIndex (): number {
         return this._readIndex;
     }
@@ -52,12 +75,14 @@ export default class Writer extends Readable {
         throw new RangeError('value is out of range');
     }
 
+    /** @ignore */
     private static writeUIntBE (value: BigInteger, bytes: number): Buffer {
         const hex = value.toString(16).padStart(bytes * 2, '0');
 
         return Buffer.from(hex, 'hex');
     }
 
+    /** @ignore */
     private static writeUIntLE (value: BigInteger, bytes: number): Buffer {
         const hex = value.toString(16).padStart(bytes * 2, '0');
 
@@ -101,10 +126,19 @@ export default class Writer extends Readable {
         }
     }
 
+    /**
+     * Clears the current write buffer
+     */
     public clear () {
         this._buffer = Buffer.alloc(0);
     }
 
+    /**
+     * Writes a hash to the buffer
+     *
+     * @param hash
+     * @param encoding
+     */
     public hash (hash: Buffer | string, encoding: BufferEncoding = 'hex'): boolean {
         if (hash instanceof Buffer && (hash.length === 32 || hash.length === 64)) {
             return this.write(hash);
@@ -115,17 +149,29 @@ export default class Writer extends Readable {
         return false;
     }
 
-    public hex (hex: Buffer | string, encoding: BufferEncoding = 'hex'): boolean {
+    /**
+     * Writes the hex encoded value to the buffer
+     *
+     * @param hex
+     */
+    public hex (hex: Buffer | string): boolean {
         if (hex instanceof Buffer) {
             return this.write(hex);
         } else if (hex.length % 2 === 0) {
-            return this.write(hex, encoding);
+            return this.write(hex, 'hex');
         }
 
         return false;
     }
 
-    public integer (
+    /**
+     * Writes a signed integer to the buffer
+     *
+     * @param value
+     * @param bits
+     * @param bigEndian
+     */
+    public signed_integer (
         value: BigInteger | number,
         bits: BitSize = Writer.determineBits(value),
         bigEndian = false
@@ -162,22 +208,48 @@ export default class Writer extends Readable {
         return this.write(buffer);
     }
 
+    /**
+     * Writes an int8_t to the buffer
+     *
+     * @param value
+     */
     public int8_t (value: BigInteger | number): boolean {
-        return this.integer(value, 8);
+        return this.signed_integer(value, 8);
     }
 
+    /**
+     * Writes an int16_t to the buffer
+     *
+     * @param value
+     */
     public int16_t (value: BigInteger | number): boolean {
-        return this.integer(value, 16);
+        return this.signed_integer(value, 16);
     }
 
+    /**
+     * Writes an int32_t to the buffer
+     *
+     * @param value
+     */
     public int32_t (value: BigInteger | number): boolean {
-        return this.integer(value, 32);
+        return this.signed_integer(value, 32);
     }
 
+    /**
+     * Writes an int64_t to the buffer
+     *
+     * @param value
+     */
     public int64_t (value: BigInteger | number): boolean {
-        return this.integer(value, 64);
+        return this.signed_integer(value, 64);
     }
 
+    /**
+     * Writes a string to the buffer
+     *
+     * @param value
+     * @param encoding
+     */
     public string (value: string, encoding: BufferEncoding = 'utf-8'): boolean {
         const success = this.varint(value.length);
 
@@ -186,16 +258,34 @@ export default class Writer extends Readable {
         return success && this.write(buffer);
     }
 
+    /**
+     * Writes a time_t to the buffer
+     *
+     * @param value
+     * @param bigEndian
+     */
     public time_t (value: Date, bigEndian = false): boolean {
         const num = BytePackBigInt(Math.floor(value.getTime() / 1000));
 
         return this.uint64_t(num, !bigEndian);
     }
 
+    /**
+     * Dumps the buffer to a string
+     *
+     * @param encoding
+     */
     public toString (encoding: BufferEncoding = 'hex'): string {
         return this.buffer.toString(encoding);
     }
 
+    /**
+     * Writes an unsigned integer to the buffer
+     *
+     * @param value
+     * @param bits
+     * @param bigEndian
+     */
     public unsigned_integer (
         value: BigInteger | number,
         bits: BitSize = Writer.determineBits(value),
@@ -220,34 +310,82 @@ export default class Writer extends Readable {
         return this.write(buffer);
     }
 
+    /**
+     * Writes an uint8_t to the buffer
+     *
+     * @param value
+     * @param bigEndian
+     */
     public uint8_t (value: BigInteger | number, bigEndian = false): boolean {
         return this.unsigned_integer(value, 8, bigEndian);
     }
 
+    /**
+     * Writes an uint16_t to the buffer
+     *
+     * @param value
+     * @param bigEndian
+     */
     public uint16_t (value: BigInteger | number, bigEndian = false): boolean {
         return this.unsigned_integer(value, 16, bigEndian);
     }
 
+    /**
+     * Writes an uint32_t to the buffer
+     *
+     * @param value
+     * @param bigEndian
+     */
     public uint32_t (value: BigInteger | number, bigEndian = false): boolean {
         return this.unsigned_integer(value, 32, bigEndian);
     }
 
+    /**
+     * Writes an uint64_t to the buffer
+     *
+     * @param value
+     * @param bigEndian
+     */
     public uint64_t (value: BigInteger | number, bigEndian = false): boolean {
         return this.unsigned_integer(value, 64, bigEndian);
     }
 
+    /**
+     * Writes an uint128_t to the buffer
+     *
+     * @param value
+     * @param bigEndian
+     */
     public uint128_t (value: BigInteger | number, bigEndian = false): boolean {
         return this.unsigned_integer(value, 128, bigEndian);
     }
 
+    /**
+     * Writes an uint256_t to the buffer
+     *
+     * @param value
+     * @param bigEndian
+     */
     public uint256_t (value: BigInteger | number, bigEndian = false): boolean {
         return this.unsigned_integer(value, 256, bigEndian);
     }
 
+    /**
+     * Writes an uint512_t to the buffer
+     *
+     * @param value
+     * @param bigEndian
+     */
     public uint512_t (value: BigInteger | number, bigEndian = false): boolean {
         return this.unsigned_integer(value, 512, bigEndian);
     }
 
+    /**
+     * Writes a Varint to the buffer
+     *
+     * @param value
+     * @param levin
+     */
     public varint (value: BigInteger | number, levin = false): boolean {
         if (typeof value === 'number') {
             value = BytePackBigInt(value);
@@ -289,6 +427,12 @@ export default class Writer extends Readable {
         }
     }
 
+    /**
+     * Writes the supplied value to the buffer
+     *
+     * @param payload
+     * @param encoding
+     */
     public write (
         payload: Buffer | Writer | Reader | Uint8Array | string,
         encoding: BufferEncoding = 'hex'
@@ -310,5 +454,14 @@ export default class Writer extends Readable {
         } else { // if it's not a string, it needs to be
             return write(Buffer.from(JSON.stringify(payload)));
         }
+    }
+
+    /**
+     * Writes the specified bytes to the buffer
+     *
+     * @param value
+     */
+    public bytes (value: Buffer | Uint8Array): boolean {
+        return this.write(value);
     }
 }
