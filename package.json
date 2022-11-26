@@ -1,6 +1,6 @@
 {
   "name": "@gibme/bytepack",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Byte-Packing library",
   "main": "dist/bytepack.js",
   "types": "dist/bytepack.d.ts",

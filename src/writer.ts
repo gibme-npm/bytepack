@@ -139,14 +139,14 @@ export default class Writer extends Readable {
      * @param hash
      * @param encoding
      */
-    public hash (hash: Buffer | string, encoding: BufferEncoding = 'hex'): boolean {
-        if (hash instanceof Buffer && (hash.length === 32 || hash.length === 64)) {
+    public hash (hash: Buffer | Uint8Array | string, encoding: BufferEncoding = 'hex'): Writer {
+        if ((hash instanceof Buffer || hash instanceof Uint8Array) && (hash.length === 32 || hash.length === 64)) {
             return this.write(hash);
         } else if (typeof hash === 'string' && (hash.length === 64 || hash.length === 128)) {
             return this.write(hash, encoding);
         }
 
-        return false;
+        throw new TypeError('hash is of wrong size and/or type');
     }
 
     /**
@@ -154,14 +154,14 @@ export default class Writer extends Readable {
      *
      * @param hex
      */
-    public hex (hex: Buffer | string): boolean {
-        if (hex instanceof Buffer) {
+    public hex (hex: Buffer | Uint8Array | string): Writer {
+        if (hex instanceof Buffer || hex instanceof Uint8Array) {
             return this.write(hex);
         } else if (hex.length % 2 === 0) {
             return this.write(hex, 'hex');
         }
 
-        return false;
+        throw new TypeError('hex is of the wrong size and/or type');
     }
 
     /**
@@ -175,7 +175,7 @@ export default class Writer extends Readable {
         value: BigInteger | number,
         bits: BitSize = Writer.determineBits(value),
         bigEndian = false
-    ): boolean {
+    ): Writer {
         if (bits % 8 !== 0) {
             throw new RangeError('bits must be a multiple of 8');
         }
@@ -202,7 +202,7 @@ export default class Writer extends Readable {
                 (bigEndian ? buffer.writeBigInt64BE : buffer.writeBigInt64LE)(BigInt(value.toString()), 0);
                 break;
             default:
-                return false;
+                throw new TypeError('value bit size is not supported');
         }
 
         return this.write(buffer);
@@ -213,7 +213,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public int8_t (value: BigInteger | number): boolean {
+    public int8_t (value: BigInteger | number): Writer {
         return this.signed_integer(value, 8);
     }
 
@@ -222,7 +222,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public int16_t (value: BigInteger | number): boolean {
+    public int16_t (value: BigInteger | number): Writer {
         return this.signed_integer(value, 16);
     }
 
@@ -231,7 +231,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public int32_t (value: BigInteger | number): boolean {
+    public int32_t (value: BigInteger | number): Writer {
         return this.signed_integer(value, 32);
     }
 
@@ -240,7 +240,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public int64_t (value: BigInteger | number): boolean {
+    public int64_t (value: BigInteger | number): Writer {
         return this.signed_integer(value, 64);
     }
 
@@ -250,12 +250,16 @@ export default class Writer extends Readable {
      * @param value
      * @param encoding
      */
-    public string (value: string, encoding: BufferEncoding = 'utf-8'): boolean {
+    public string (value: string, encoding: BufferEncoding = 'utf-8'): Writer {
         const success = this.varint(value.length);
+
+        if (!success) {
+            throw new Error('could not encode string length as varint');
+        }
 
         const buffer = Buffer.from(value, encoding);
 
-        return success && this.write(buffer);
+        return this.write(buffer);
     }
 
     /**
@@ -264,7 +268,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public time_t (value: Date, bigEndian = false): boolean {
+    public time_t (value: Date, bigEndian = false): Writer {
         const num = BytePackBigInt(Math.floor(value.getTime() / 1000));
 
         return this.uint64_t(num, !bigEndian);
@@ -290,7 +294,7 @@ export default class Writer extends Readable {
         value: BigInteger | number,
         bits: BitSize = Writer.determineBits(value),
         bigEndian = false
-    ): boolean {
+    ): Writer {
         if (typeof value === 'number') {
             value = BytePackBigInt(value);
         }
@@ -316,7 +320,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint8_t (value: BigInteger | number, bigEndian = false): boolean {
+    public uint8_t (value: BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 8, bigEndian);
     }
 
@@ -326,7 +330,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint16_t (value: BigInteger | number, bigEndian = false): boolean {
+    public uint16_t (value: BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 16, bigEndian);
     }
 
@@ -336,7 +340,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint32_t (value: BigInteger | number, bigEndian = false): boolean {
+    public uint32_t (value: BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 32, bigEndian);
     }
 
@@ -346,7 +350,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint64_t (value: BigInteger | number, bigEndian = false): boolean {
+    public uint64_t (value: BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 64, bigEndian);
     }
 
@@ -356,7 +360,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint128_t (value: BigInteger | number, bigEndian = false): boolean {
+    public uint128_t (value: BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 128, bigEndian);
     }
 
@@ -366,7 +370,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint256_t (value: BigInteger | number, bigEndian = false): boolean {
+    public uint256_t (value: BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 256, bigEndian);
     }
 
@@ -376,7 +380,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint512_t (value: BigInteger | number, bigEndian = false): boolean {
+    public uint512_t (value: BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 512, bigEndian);
     }
 
@@ -386,15 +390,13 @@ export default class Writer extends Readable {
      * @param value
      * @param levin
      */
-    public varint (value: BigInteger | number, levin = false): boolean {
+    public varint (value: BigInteger | number, levin = false): Writer {
         if (typeof value === 'number') {
             value = BytePackBigInt(value);
         }
 
         if (!levin) {
-            this.write(Buffer.from(Varint.encode(value)));
-
-            return true;
+            return this.write(Buffer.from(Varint.encode(value)));
         } else {
             if (value.greater(BytePackBigInt('1073741823'))) {
                 throw new RangeError('value out of range');
@@ -418,12 +420,10 @@ export default class Writer extends Readable {
             }
 
             for (let i = 0; i < byteCount; i++) {
-                if (!this.uint8_t((tempValue >> i * 8) & 0xFF)) {
-                    return false;
-                }
+                this.uint8_t((tempValue >> i * 8) & 0xFF);
             }
 
-            return true;
+            return this;
         }
     }
 
@@ -436,11 +436,11 @@ export default class Writer extends Readable {
     public write (
         payload: Buffer | Writer | Reader | Uint8Array | string,
         encoding: BufferEncoding = 'hex'
-    ): boolean {
-        const write = (buffer: Buffer): boolean => {
+    ): Writer {
+        const write = (buffer: Buffer): Writer => {
             this._buffer = Buffer.concat([this._buffer, buffer]);
 
-            return true;
+            return this;
         };
 
         if (payload instanceof Writer) {
@@ -461,7 +461,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public bytes (value: Buffer | Uint8Array): boolean {
+    public bytes (value: Buffer | Uint8Array): Writer {
         return this.write(value);
     }
 }
