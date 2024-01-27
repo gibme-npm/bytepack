@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,10 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import BytePackBigInt from 'big-integer';
-
-export type BigInteger = BytePackBigInt.BigInteger;
-export { BytePackBigInt };
+import BigInteger from 'big-integer';
 
 export default abstract class Varint {
     /**
@@ -29,14 +26,14 @@ export default abstract class Varint {
      *
      * @param buffer
      */
-    public static decode (buffer: Buffer): BigInteger {
+    public static decode (buffer: Buffer): BigInteger.BigInteger {
         let counter = 0;
 
         let shift = 0;
 
         let b: number;
 
-        let result = BytePackBigInt.zero;
+        let result = BigInteger.zero;
 
         do {
             if (counter >= buffer.length) {
@@ -60,9 +57,9 @@ export default abstract class Varint {
      *
      * @param value
      */
-    public static encode (value: BigInteger | number): Buffer {
+    public static encode (value: BigInteger.BigInteger | number): Buffer {
         if (typeof value === 'number') {
-            value = BytePackBigInt.zero.add(value);
+            value = BigInteger.zero.add(value);
         }
 
         const out = [];

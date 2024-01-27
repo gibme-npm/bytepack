@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Varint, { BigInteger, BytePackBigInt } from './varint';
+import Varint from './varint';
+import BigInteger from 'big-integer';
 import Writer from './writer';
 import { Writable } from 'stream';
 import { BitSize, HashBytesSize } from './types';
@@ -86,10 +87,10 @@ export default class Reader extends Writable {
         bytes: number,
         offset = 0,
         noAssert = false
-    ): BigInteger {
+    ): BigInteger.BigInteger {
         if (buffer.length < offset + bytes) {
             if (noAssert) {
-                return BytePackBigInt.zero;
+                return BigInteger.zero;
             }
 
             throw new RangeError('Out of bounds');
@@ -97,7 +98,7 @@ export default class Reader extends Writable {
 
         const slice = buffer.slice(offset, offset + bytes);
 
-        return BytePackBigInt(slice.toString('hex'), 16);
+        return BigInteger(slice.toString('hex'), 16);
     }
 
     /** @ignore */
@@ -106,10 +107,10 @@ export default class Reader extends Writable {
         bytes: number,
         offset = 0,
         noAssert = false
-    ): BigInteger {
+    ): BigInteger.BigInteger {
         if (buffer.length < offset + bytes) {
             if (noAssert) {
-                return BytePackBigInt.zero;
+                return BigInteger.zero;
             }
 
             throw new RangeError('Out of bounds');
@@ -127,7 +128,7 @@ export default class Reader extends Writable {
             position -= 1;
         }
 
-        return BytePackBigInt(tempBuffer.toString('hex'), 16);
+        return BigInteger(tempBuffer.toString('hex'), 16);
     }
 
     /** @ignore */
@@ -222,7 +223,7 @@ export default class Reader extends Writable {
      * @param bits
      * @param bigEndian
      */
-    public signed_integer (bits: BitSize, bigEndian = false): BigInteger {
+    public signed_integer (bits: BitSize, bigEndian = false): BigInteger.BigInteger {
         if (bits % 8 !== 0) {
             throw new RangeError('bits must be a multiple of 8');
         }
@@ -233,13 +234,13 @@ export default class Reader extends Writable {
 
         switch (bytes) {
             case 1:
-                return BytePackBigInt(result.readInt8());
+                return BigInteger(result.readInt8());
             case 2:
-                return BytePackBigInt(bigEndian ? result.readInt16BE() : result.readInt16LE());
+                return BigInteger(bigEndian ? result.readInt16BE() : result.readInt16LE());
             case 4:
-                return BytePackBigInt(bigEndian ? result.readInt32BE() : result.readInt32LE());
+                return BigInteger(bigEndian ? result.readInt32BE() : result.readInt32LE());
             case 8:
-                return BytePackBigInt(bigEndian ? result.readBigInt64BE() : result.readBigInt64LE());
+                return BigInteger(bigEndian ? result.readBigInt64BE() : result.readBigInt64LE());
             default:
                 throw new RangeError('Data type');
         }
@@ -248,7 +249,7 @@ export default class Reader extends Writable {
     /**
      * Reads an int8_t from the buffer
      */
-    public int8_t (): BigInteger {
+    public int8_t (): BigInteger.BigInteger {
         return this.signed_integer(8);
     }
 
@@ -257,7 +258,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public int16_t (bigEndian = false): BigInteger {
+    public int16_t (bigEndian = false): BigInteger.BigInteger {
         return this.signed_integer(16, bigEndian);
     }
 
@@ -266,7 +267,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public int32_t (bigEndian = false): BigInteger {
+    public int32_t (bigEndian = false): BigInteger.BigInteger {
         return this.signed_integer(32, bigEndian);
     }
 
@@ -275,7 +276,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public int64_t (bigEndian = false): BigInteger {
+    public int64_t (bigEndian = false): BigInteger.BigInteger {
         return this.signed_integer(64, bigEndian);
     }
 
@@ -334,7 +335,7 @@ export default class Reader extends Writable {
      * @param bits
      * @param bigEndian
      */
-    public unsigned_integer (bits: BitSize, bigEndian = false): BigInteger {
+    public unsigned_integer (bits: BitSize, bigEndian = false): BigInteger.BigInteger {
         if (bits % 8 !== 0) {
             throw new RangeError('bits must be a multiple of 8');
         }
@@ -349,7 +350,7 @@ export default class Reader extends Writable {
     /**
      * Reads an uint8_t from the buffer
      */
-    public uint8_t (): BigInteger {
+    public uint8_t (): BigInteger.BigInteger {
         return this.unsigned_integer(8);
     }
 
@@ -358,7 +359,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public uint16_t (bigEndian = false): BigInteger {
+    public uint16_t (bigEndian = false): BigInteger.BigInteger {
         return this.unsigned_integer(16, bigEndian);
     }
 
@@ -367,7 +368,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public uint32_t (bigEndian = false): BigInteger {
+    public uint32_t (bigEndian = false): BigInteger.BigInteger {
         return this.unsigned_integer(32, bigEndian);
     }
 
@@ -376,7 +377,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public uint64_t (bigEndian = false): BigInteger {
+    public uint64_t (bigEndian = false): BigInteger.BigInteger {
         return this.unsigned_integer(64, bigEndian);
     }
 
@@ -385,7 +386,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public uint128_t (bigEndian = false): BigInteger {
+    public uint128_t (bigEndian = false): BigInteger.BigInteger {
         return this.unsigned_integer(128, bigEndian);
     }
 
@@ -394,7 +395,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public uint256_t (bigEndian = false): BigInteger {
+    public uint256_t (bigEndian = false): BigInteger.BigInteger {
         return this.unsigned_integer(256, bigEndian);
     }
 
@@ -403,7 +404,7 @@ export default class Reader extends Writable {
      *
      * @param bigEndian
      */
-    public uint512_t (bigEndian = false): BigInteger {
+    public uint512_t (bigEndian = false): BigInteger.BigInteger {
         return this.unsigned_integer(512, bigEndian);
     }
 
@@ -413,7 +414,7 @@ export default class Reader extends Writable {
      * @param peek
      * @param levin
      */
-    public varint (peek = false, levin = false): BigInteger {
+    public varint (peek = false, levin = false): BigInteger.BigInteger {
         const start = this._current_offset;
 
         if (!levin) {
@@ -432,11 +433,11 @@ export default class Reader extends Writable {
                 this._current_offset++;
             } while (true);
         } else {
-            let value: BigInteger | number = this.uint8_t().toJSNumber();
+            let value: BigInteger.BigInteger | number = this.uint8_t().toJSNumber();
 
             const sizeMask = value & 0x03;
 
-            value = BytePackBigInt(value);
+            value = BigInteger(value);
 
             let bytesLeft = 0;
 

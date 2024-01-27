@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,9 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import assert from 'assert';
+import * as assert from 'assert';
 import { describe, it } from 'mocha';
-import { Reader, Writer, BytePackBigInt } from '../src/bytepack';
+import { Reader, Writer, BigInteger } from '../src/bytepack';
 import { format } from 'util';
 
 describe('string', () => {
@@ -32,7 +32,7 @@ describe('string', () => {
 
         const r = new Reader(w);
 
-        assert(r.string() === str);
+        assert.equal(r.string(), str);
     });
 });
 
@@ -45,7 +45,7 @@ describe('hash', () => {
 
         const r = new Reader(w);
 
-        assert(r.hash() === value);
+        assert.equal(r.hash(), value);
     });
 });
 
@@ -57,7 +57,7 @@ describe('time_t [little-endian]', () => {
         const w = new Writer();
         w.time_t(date);
 
-        assert(w.toString() === hex);
+        assert.equal(w.toString(), hex);
 
         const r = new Reader(w);
 
@@ -71,7 +71,7 @@ describe('time_t [little-endian]', () => {
         const w = new Writer();
         w.time_t(date);
 
-        assert(w.toString() === hex);
+        assert.equal(w.toString(), hex);
 
         const r = new Reader(w);
 
@@ -85,7 +85,7 @@ describe('time_t [little-endian]', () => {
         const w = new Writer();
         w.time_t(date);
 
-        assert(w.toString() === hex);
+        assert.equal(w.toString(), hex);
 
         const r = new Reader(w);
 
@@ -99,14 +99,14 @@ describe('time_t [little-endian]', () => {
         const w = new Writer();
         w.time_t(date);
 
-        assert(w.toString() === hex);
+        assert.equal(w.toString(), hex);
 
         const r = new Reader(w);
 
         const left = r.time_t().getTime() / 1000;
         const right = Math.floor(date.getTime() / 1000);
 
-        assert(left === right);
+        assert.equal(left, right);
     });
 });
 
@@ -118,7 +118,7 @@ describe('time_t [big-endian]', () => {
         const w = new Writer();
         w.time_t(date, true);
 
-        assert(w.toString() === hex);
+        assert.equal(w.toString(), hex);
 
         const r = new Reader(w);
 
@@ -132,7 +132,7 @@ describe('time_t [big-endian]', () => {
         const w = new Writer();
         w.time_t(date, true);
 
-        assert(w.toString() === hex);
+        assert.equal(w.toString(), hex);
 
         const r = new Reader(w);
 
@@ -146,7 +146,7 @@ describe('time_t [big-endian]', () => {
         const w = new Writer();
         w.time_t(date, true);
 
-        assert(w.toString() === hex);
+        assert.equal(w.toString(), hex);
 
         const r = new Reader(w);
 
@@ -160,14 +160,14 @@ describe('time_t [big-endian]', () => {
         const w = new Writer();
         w.time_t(date, true);
 
-        assert(w.toString() === hex);
+        assert.equal(w.toString(), hex);
 
         const r = new Reader(w);
 
         const left = r.time_t(true).getTime() / 1000;
         const right = Math.floor(date.getTime() / 1000);
 
-        assert(left === right);
+        assert.equal(left, right);
     });
 });
 
@@ -180,7 +180,7 @@ describe('uint8_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint8_t().toJSNumber() === value);
+        assert.equal(r.uint8_t().toJSNumber(), value);
     });
 
     it('127', () => {
@@ -191,7 +191,7 @@ describe('uint8_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint8_t().toJSNumber() === value);
+        assert.equal(r.uint8_t().toJSNumber(), value);
     });
 
     it('255', () => {
@@ -202,7 +202,7 @@ describe('uint8_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint8_t().toJSNumber() === value);
+        assert.equal(r.uint8_t().toJSNumber(), value);
     });
 });
 
@@ -215,7 +215,7 @@ describe('uint16_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint16_t().toJSNumber() === value);
+        assert.equal(r.uint16_t().toJSNumber(), value);
     });
 
     it('32767', () => {
@@ -226,7 +226,7 @@ describe('uint16_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint16_t().toJSNumber() === value);
+        assert.equal(r.uint16_t().toJSNumber(), value);
     });
 
     it('65535', () => {
@@ -237,7 +237,7 @@ describe('uint16_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint16_t().toJSNumber() === value);
+        assert.equal(r.uint16_t().toJSNumber(), value);
     });
 });
 
@@ -250,7 +250,7 @@ describe('uint32_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint32_t().toJSNumber() === value);
+        assert.equal(r.uint32_t().toJSNumber(), value);
     });
 
     it('2147483647', () => {
@@ -261,7 +261,7 @@ describe('uint32_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint32_t().toJSNumber() === value);
+        assert.equal(r.uint32_t().toJSNumber(), value);
     });
 
     it('4294967295', () => {
@@ -272,7 +272,7 @@ describe('uint32_t', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint32_t().toJSNumber() === value);
+        assert.equal(r.uint32_t().toJSNumber(), value);
     });
 });
 
@@ -285,7 +285,7 @@ describe('uint64_t [little-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t().toJSNumber() === value);
+        assert.equal(r.uint64_t().toJSNumber(), value);
     });
 
     it('65535', () => {
@@ -296,7 +296,7 @@ describe('uint64_t [little-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t().toJSNumber() === value);
+        assert.equal(r.uint64_t().toJSNumber(), value);
     });
 
     it('2147483647', () => {
@@ -307,7 +307,7 @@ describe('uint64_t [little-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t().toJSNumber() === value);
+        assert.equal(r.uint64_t().toJSNumber(), value);
     });
 
     it('4294967295', () => {
@@ -318,7 +318,7 @@ describe('uint64_t [little-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t().toJSNumber() === value);
+        assert.equal(r.uint64_t().toJSNumber(), value);
     });
 
     it(Number.MAX_SAFE_INTEGER.toString() + ' [max safe integer]', () => {
@@ -329,11 +329,11 @@ describe('uint64_t [little-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t().toJSNumber() === value);
+        assert.equal(r.uint64_t().toJSNumber(), value);
     });
 
     it('9223372036854775807', () => {
-        const value = BytePackBigInt('9223372036854775807');
+        const value = BigInteger('9223372036854775807');
 
         const w = new Writer();
         w.uint64_t(value);
@@ -344,7 +344,7 @@ describe('uint64_t [little-endian]', () => {
     });
 
     it('18446744073709551615', () => {
-        const value = BytePackBigInt('18446744073709551615');
+        const value = BigInteger('18446744073709551615');
 
         const w = new Writer();
         w.uint64_t(value);
@@ -364,7 +364,7 @@ describe('uint64_t [big-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t(true).toJSNumber() === value);
+        assert.equal(r.uint64_t(true).toJSNumber(), value);
     });
 
     it('65535', () => {
@@ -375,7 +375,7 @@ describe('uint64_t [big-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t(true).toJSNumber() === value);
+        assert.equal(r.uint64_t(true).toJSNumber(), value);
     });
 
     it('2147483647', () => {
@@ -386,7 +386,7 @@ describe('uint64_t [big-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t(true).toJSNumber() === value);
+        assert.equal(r.uint64_t(true).toJSNumber(), value);
     });
 
     it('4294967295', () => {
@@ -397,7 +397,7 @@ describe('uint64_t [big-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t(true).toJSNumber() === value);
+        assert.equal(r.uint64_t(true).toJSNumber(), value);
     });
 
     it(Number.MAX_SAFE_INTEGER.toString() + ' [max safe integer]', () => {
@@ -408,11 +408,11 @@ describe('uint64_t [big-endian]', () => {
 
         const r = new Reader(w);
 
-        assert(r.uint64_t(true).toJSNumber() === value);
+        assert.equal(r.uint64_t(true).toJSNumber(), value);
     });
 
     it('9223372036854775807', () => {
-        const value = BytePackBigInt('9223372036854775807');
+        const value = BigInteger('9223372036854775807');
 
         const w = new Writer();
         w.uint64_t(value, true);
@@ -423,7 +423,7 @@ describe('uint64_t [big-endian]', () => {
     });
 
     it('18446744073709551615', () => {
-        const value = BytePackBigInt('18446744073709551615');
+        const value = BigInteger('18446744073709551615');
 
         const w = new Writer();
         w.uint64_t(value, true);
@@ -443,8 +443,8 @@ describe('varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === '00');
-        assert(r.varint().toJSNumber() === value);
+        assert.equal(w.toString(), '00');
+        assert.equal(r.varint().toJSNumber(), value);
     });
 
     it('127', () => {
@@ -455,8 +455,8 @@ describe('varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === '7f');
-        assert(r.varint().toJSNumber() === value);
+        assert.equal(w.toString(), '7f');
+        assert.equal(r.varint().toJSNumber(), value);
     });
 
     it('255', () => {
@@ -467,8 +467,8 @@ describe('varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'ff01');
-        assert(r.varint().toJSNumber() === value);
+        assert.equal(w.toString(), 'ff01');
+        assert.equal(r.varint().toJSNumber(), value);
     });
 
     it('32767', () => {
@@ -479,8 +479,8 @@ describe('varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'ffff01');
-        assert(r.varint().toJSNumber() === value);
+        assert.equal(w.toString(), 'ffff01');
+        assert.equal(r.varint().toJSNumber(), value);
     });
 
     it('65535', () => {
@@ -491,8 +491,8 @@ describe('varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'ffff03');
-        assert(r.varint().toJSNumber() === value);
+        assert.equal(w.toString(), 'ffff03');
+        assert.equal(r.varint().toJSNumber(), value);
     });
 
     it('2147483647', () => {
@@ -503,8 +503,8 @@ describe('varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'ffffffff07');
-        assert(r.varint().toJSNumber() === value);
+        assert.equal(w.toString(), 'ffffffff07');
+        assert.equal(r.varint().toJSNumber(), value);
     });
 
     it('4294967295', () => {
@@ -515,8 +515,8 @@ describe('varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'ffffffff0f');
-        assert(r.varint().toJSNumber() === value);
+        assert.equal(w.toString(), 'ffffffff0f');
+        assert.equal(r.varint().toJSNumber(), value);
     });
 
     it(Number.MAX_SAFE_INTEGER.toString() + ' [max safe integer]', () => {
@@ -527,31 +527,31 @@ describe('varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'ffffffffffffff0f');
-        assert(r.varint().toJSNumber() === value);
+        assert.equal(w.toString(), 'ffffffffffffff0f');
+        assert.equal(r.varint().toJSNumber(), value);
     });
 
     it('9223372036854775807', () => {
-        const value = BytePackBigInt('9223372036854775807');
+        const value = BigInteger('9223372036854775807');
 
         const w = new Writer();
         w.varint(value);
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'ffffffffffffffff7f');
+        assert.equal(w.toString(), 'ffffffffffffffff7f');
         assert.deepEqual(r.varint(), value);
     });
 
     it('18446744073709551615', () => {
-        const value = BytePackBigInt('18446744073709551615');
+        const value = BigInteger('18446744073709551615');
 
         const w = new Writer();
         w.varint(value);
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'ffffffffffffffffff01');
+        assert.equal(w.toString(), 'ffffffffffffffffff01');
         assert.deepEqual(r.varint(), value);
     });
 });
@@ -565,8 +565,8 @@ describe('Levin varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === '00');
-        assert(r.varint(false, true).toJSNumber() === value);
+        assert.equal(w.toString(), '00');
+        assert.equal(r.varint(false, true).toJSNumber(), value);
     });
 
     it('127', () => {
@@ -577,8 +577,8 @@ describe('Levin varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'fd01');
-        assert(r.varint(false, true).toJSNumber() === value);
+        assert.equal(w.toString(), 'fd01');
+        assert.equal(r.varint(false, true).toJSNumber(), value);
     });
 
     it('255', () => {
@@ -589,8 +589,8 @@ describe('Levin varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'fd03');
-        assert(r.varint(false, true).toJSNumber() === value);
+        assert.equal(w.toString(), 'fd03');
+        assert.equal(r.varint(false, true).toJSNumber(), value);
     });
 
     it('32767', () => {
@@ -601,8 +601,8 @@ describe('Levin varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'feff0100');
-        assert(r.varint(false, true).toJSNumber() === value);
+        assert.equal(w.toString(), 'feff0100');
+        assert.equal(r.varint(false, true).toJSNumber(), value);
     });
 
     it('65535', () => {
@@ -613,8 +613,8 @@ describe('Levin varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'feff0300');
-        assert(r.varint(false, true).toJSNumber() === value);
+        assert.equal(w.toString(), 'feff0300');
+        assert.equal(r.varint(false, true).toJSNumber(), value);
     });
 
     it('1073741823', () => {
@@ -625,8 +625,8 @@ describe('Levin varint', () => {
 
         const r = new Reader(w);
 
-        assert(w.toString() === 'feffffff');
-        assert(r.varint(false, true).toJSNumber() === value);
+        assert.equal(w.toString(), 'feffffff');
+        assert.equal(r.varint(false, true).toJSNumber(), value);
     });
 });
 
@@ -635,7 +635,7 @@ describe('Extremely Large Values', () => {
 
     describe('Big Endian', () => {
         for (const bits of bitSizes) {
-            const value = BytePackBigInt(2).pow(bits)
+            const value = BigInteger(2).pow(bits)
                 .subtract(1);
 
             const subValue = value.divide(2);
@@ -657,7 +657,7 @@ describe('Extremely Large Values', () => {
 
                 const r = new Reader(w);
 
-                assert(w.toString() === ''.padStart(bits / 4, 'f'));
+                assert.equal(w.toString(), ''.padStart(bits / 4, 'f'));
                 assert.deepEqual(r.unsigned_integer(bits, true), value);
             });
         }
@@ -665,7 +665,7 @@ describe('Extremely Large Values', () => {
 
     describe('Little Endian', () => {
         for (const bits of bitSizes) {
-            const value = BytePackBigInt(2).pow(bits)
+            const value = BigInteger(2).pow(bits)
                 .subtract(1);
 
             const subValue = value.divide(2);
@@ -687,7 +687,7 @@ describe('Extremely Large Values', () => {
 
                 const r = new Reader(w);
 
-                assert(w.toString() === ''.padStart(bits / 4, 'f'));
+                assert.equal(w.toString(), ''.padStart(bits / 4, 'f'));
                 assert.deepEqual(r.unsigned_integer(bits), value);
             });
         }

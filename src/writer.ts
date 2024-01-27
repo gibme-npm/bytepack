@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2022, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Varint, { BigInteger, BytePackBigInt } from './varint';
+import Varint from './varint';
+import BigInteger from 'big-integer';
 import { Readable } from 'stream';
 import Reader from './reader';
 import { BitSize } from './types';
@@ -63,21 +64,21 @@ export default class Writer extends Readable {
     }
 
     /** @ignore */
-    private static determineBits (value: BigInteger | number): BitSize {
+    private static determineBits (value: BigInteger.BigInteger | number): BitSize {
         if (typeof value === 'number') {
-            value = BytePackBigInt(value);
+            value = BigInteger(value);
         }
 
         const bytes: number [] = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
 
         for (const byte of bytes) {
-            let check = BytePackBigInt.zero;
+            let check = BigInteger.zero;
 
             if (value.greater(-1)) {
-                check = BytePackBigInt(2).pow(byte * 8)
+                check = BigInteger(2).pow(byte * 8)
                     .subtract(1);
             } else {
-                check = BytePackBigInt(2).pow((byte * 8) - 1)
+                check = BigInteger(2).pow((byte * 8) - 1)
                     .subtract(1)
                     .abs();
             }
@@ -91,14 +92,14 @@ export default class Writer extends Readable {
     }
 
     /** @ignore */
-    private static writeUIntBE (value: BigInteger, bytes: number): Buffer {
+    private static writeUIntBE (value: BigInteger.BigInteger, bytes: number): Buffer {
         const hex = value.toString(16).padStart(bytes * 2, '0');
 
         return Buffer.from(hex, 'hex');
     }
 
     /** @ignore */
-    private static writeUIntLE (value: BigInteger, bytes: number): Buffer {
+    private static writeUIntLE (value: BigInteger.BigInteger, bytes: number): Buffer {
         const hex = value.toString(16).padStart(bytes * 2, '0');
 
         const buffer = Buffer.from(hex, 'hex');
@@ -187,7 +188,7 @@ export default class Writer extends Readable {
      * @param bigEndian
      */
     public signed_integer (
-        value: BigInteger | number,
+        value: BigInteger.BigInteger | number,
         bits: BitSize = Writer.determineBits(value),
         bigEndian = false
     ): Writer {
@@ -196,7 +197,7 @@ export default class Writer extends Readable {
         }
 
         if (typeof value === 'number') {
-            value = BytePackBigInt(value);
+            value = BigInteger(value);
         }
 
         const bytes = bits / 8;
@@ -228,7 +229,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public int8_t (value: BigInteger | number): Writer {
+    public int8_t (value: BigInteger.BigInteger | number): Writer {
         return this.signed_integer(value, 8);
     }
 
@@ -237,7 +238,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public int16_t (value: BigInteger | number): Writer {
+    public int16_t (value: BigInteger.BigInteger | number): Writer {
         return this.signed_integer(value, 16);
     }
 
@@ -246,7 +247,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public int32_t (value: BigInteger | number): Writer {
+    public int32_t (value: BigInteger.BigInteger | number): Writer {
         return this.signed_integer(value, 32);
     }
 
@@ -255,7 +256,7 @@ export default class Writer extends Readable {
      *
      * @param value
      */
-    public int64_t (value: BigInteger | number): Writer {
+    public int64_t (value: BigInteger.BigInteger | number): Writer {
         return this.signed_integer(value, 64);
     }
 
@@ -284,7 +285,7 @@ export default class Writer extends Readable {
      * @param bigEndian
      */
     public time_t (value: Date, bigEndian = false): Writer {
-        const num = BytePackBigInt(Math.floor(value.getTime() / 1000));
+        const num = BigInteger(Math.floor(value.getTime() / 1000));
 
         return this.uint64_t(num, !bigEndian);
     }
@@ -306,12 +307,12 @@ export default class Writer extends Readable {
      * @param bigEndian
      */
     public unsigned_integer (
-        value: BigInteger | number,
+        value: BigInteger.BigInteger | number,
         bits: BitSize = Writer.determineBits(value),
         bigEndian = false
     ): Writer {
         if (typeof value === 'number') {
-            value = BytePackBigInt(value);
+            value = BigInteger(value);
         }
 
         if (bits % 8 !== 0) {
@@ -335,7 +336,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint8_t (value: BigInteger | number, bigEndian = false): Writer {
+    public uint8_t (value: BigInteger.BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 8, bigEndian);
     }
 
@@ -345,7 +346,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint16_t (value: BigInteger | number, bigEndian = false): Writer {
+    public uint16_t (value: BigInteger.BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 16, bigEndian);
     }
 
@@ -355,7 +356,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint32_t (value: BigInteger | number, bigEndian = false): Writer {
+    public uint32_t (value: BigInteger.BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 32, bigEndian);
     }
 
@@ -365,7 +366,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint64_t (value: BigInteger | number, bigEndian = false): Writer {
+    public uint64_t (value: BigInteger.BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 64, bigEndian);
     }
 
@@ -375,7 +376,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint128_t (value: BigInteger | number, bigEndian = false): Writer {
+    public uint128_t (value: BigInteger.BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 128, bigEndian);
     }
 
@@ -385,7 +386,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint256_t (value: BigInteger | number, bigEndian = false): Writer {
+    public uint256_t (value: BigInteger.BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 256, bigEndian);
     }
 
@@ -395,7 +396,7 @@ export default class Writer extends Readable {
      * @param value
      * @param bigEndian
      */
-    public uint512_t (value: BigInteger | number, bigEndian = false): Writer {
+    public uint512_t (value: BigInteger.BigInteger | number, bigEndian = false): Writer {
         return this.unsigned_integer(value, 512, bigEndian);
     }
 
@@ -405,15 +406,15 @@ export default class Writer extends Readable {
      * @param value
      * @param levin
      */
-    public varint (value: BigInteger | number, levin = false): Writer {
+    public varint (value: BigInteger.BigInteger | number, levin = false): Writer {
         if (typeof value === 'number') {
-            value = BytePackBigInt(value);
+            value = BigInteger(value);
         }
 
         if (!levin) {
             return this.append(Buffer.from(Varint.encode(value)));
         } else {
-            if (value.greater(BytePackBigInt('1073741823'))) {
+            if (value.greater(BigInteger('1073741823'))) {
                 throw new RangeError('value out of range');
             }
 
