@@ -84,3 +84,5 @@ export default abstract class Varint {
         return Buffer.from(out);
     }
 }
+
+export { Varint };

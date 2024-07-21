@@ -18,10 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Reader from './reader';
-import Writer from './writer';
-import Varint from './varint';
-import { BitSize, HashBytesSize } from './types';
-import BigInteger from 'big-integer';
-
-export { Reader, Writer, Varint, BigInteger, BitSize, HashBytesSize };
+export { Reader } from './reader';
+export { Writer } from './writer';
+export { Varint } from './varint';
+export { BitSize, HashBytesSize } from './types';
+export { default as BigInteger } from 'big-integer';
+export { Buffer } from 'buffer';

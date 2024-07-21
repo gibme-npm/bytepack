@@ -466,3 +466,5 @@ export default class Reader extends Writable {
         }
     }
 }
+
+export { Reader };

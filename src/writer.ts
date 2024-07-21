@@ -480,3 +480,5 @@ export default class Writer extends Readable {
         return this.append(value);
     }
 }
+
+export { Writer };
