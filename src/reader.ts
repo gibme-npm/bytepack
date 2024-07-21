@@ -23,6 +23,7 @@ import BigInteger from 'big-integer';
 import Writer from './writer';
 import { Writable } from 'stream';
 import { BitSize, HashBytesSize } from './types';
+import { Buffer } from 'buffer';
 
 export default class Reader extends Writable {
     private _current_offset = 0;

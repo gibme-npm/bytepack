@@ -23,10 +23,9 @@ import BigInteger from 'big-integer';
 import { Readable } from 'stream';
 import Reader from './reader';
 import { BitSize } from './types';
+import { Buffer } from 'buffer';
 
 export default class Writer extends Readable {
-    private _buffer = Buffer.alloc(0);
-
     /**
      * Creates a new instance of the writer with the buffer preloaded with data if specified
      *
@@ -41,6 +40,8 @@ export default class Writer extends Readable {
 
         this.append(payload, encoding);
     }
+
+    private _buffer = Buffer.alloc(0);
 
     /**
      * Returns the current contents of the buffer

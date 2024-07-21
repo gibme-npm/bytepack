@@ -19,6 +19,7 @@
 // SOFTWARE.
 
 import BigInteger from 'big-integer';
+import { Buffer } from 'buffer';
 
 export default abstract class Varint {
     /**

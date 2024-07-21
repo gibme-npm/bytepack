@@ -20,7 +20,7 @@
 
 import * as assert from 'assert';
 import { describe, it } from 'mocha';
-import { Reader, Writer, BigInteger } from '../src/bytepack';
+import { Reader, Writer, BigInteger } from '../src/index';
 import { format } from 'util';
 
 describe('string', () => {
