@@ -1,6 +1,6 @@
 {
   "name": "@gibme/bytepack",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Byte-Packing library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,7 @@
   },
   "homepage": "https://gibme-npm.github.io/bytepack/",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "engineStrict": true,
   "author": {
@@ -45,9 +45,9 @@
     "filename": "[name].min.js"
   },
   "devDependencies": {
-    "@gibme/auto-pack": "^0.4.6",
+    "@gibme/auto-pack": "^0.4.7",
     "@types/mocha": "^10.0.6",
-    "@types/node": "^20.11.7",
+    "@types/node": "^22.15.17",
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "eslint": "^8.56.0",
@@ -58,8 +58,8 @@
     "eslint-plugin-promise": "^6.1.1",
     "mocha": "^10.2.0",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.25.7",
-    "typescript": "^5.3.3"
+    "typedoc": "^0.28.4",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "big-integer": "^1.6.52",

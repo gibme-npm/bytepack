@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2024, Brandon Lehmann <brandonlehmann@gmail.com>
+// Copyright (c) 2018-2025, Brandon Lehmann <brandonlehmann@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,9 +18,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import * as assert from 'assert';
+import assert from 'assert';
 import { describe, it } from 'mocha';
-import { Reader, Writer, BigInteger } from '../src/index';
+import { Reader, Writer, BigInteger } from '../src';
 import { format } from 'util';
 
 describe('string', () => {
