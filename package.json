@@ -1,6 +1,6 @@
 {
   "name": "@gibme/bytepack",
-  "version": "22.0.0",
+  "version": "22.0.1",
   "description": "Byte-Packing library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
