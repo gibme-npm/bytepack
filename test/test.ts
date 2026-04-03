@@ -19,7 +19,7 @@
 // SOFTWARE.
 
 import assert from 'assert';
-import { describe, it } from 'mocha';
+import { describe, it } from 'node:test';
 import { Reader, Writer, BigInteger } from '../src';
 import { format } from 'util';
 
